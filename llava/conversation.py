@@ -369,6 +369,18 @@ Answer the questions.""",
     sep="<|im_end|>",
 )
 
+conv_vistral_instruct = Conversation(
+    system="Cuộc trò chuyện giữa một người dùng tò mò và trợ lý trí tuệ nhân tạo."
+    "Trợ lý đưa ra câu trả lời hữu ích, chi tiết và lịch sự cho các câu hỏi của người dùng.",
+    roles=("USER", "ASSISTANT"),
+    version="llama_v2",
+    messages=(),
+    offset=0,
+    sep_style=SeparatorStyle.LLAMA_2,
+    sep="",
+    sep2="</s>",
+)
+
 default_conversation = conv_vicuna_v1
 conv_templates = {
     "default": conv_vicuna_v0,
@@ -389,6 +401,8 @@ conv_templates = {
     "llava_llama_2": conv_llava_llama_2,
 
     "mpt": conv_mpt,
+
+    "vistral": conv_vistral_instruct
 }
 
 
