@@ -4,8 +4,8 @@ deepspeed llava/train/train_mem.py \
     --deepspeed ./scripts/zero3.json \
     --model_name_or_path Viet-Mistral/Vistral-7B-Chat \
     --version vistral \
-    --data_path ./playground/data/llava_v1_5_mix665k.json \
-    --image_folder ./playground/data \
+    --data_path data/vi_llava_train.json \
+    --image_folder data/images \
     --vision_tower google/siglip-base-patch16-256-multilingual \
     --pretrain_mm_mlp_adapter ./checkpoints/llava-vistral-7b-pretrain/mm_projector.bin \
     --mm_projector_type mlp2x_gelu \

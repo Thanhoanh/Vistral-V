@@ -4,8 +4,8 @@ deepspeed llava/train/train_mem.py \
     --deepspeed ./scripts/zero2.json \
     --model_name_or_path Viet-Mistral/Vistral-7B-Chat \
     --version plain \
-    --data_path ./playground/data/LLaVA-Pretrain/blip_laion_cc_sbu_558k.json \
-    --image_folder ./playground/data/LLaVA-Pretrain/images \
+    --data_path data/vi_sharegpt4v.json \
+    --image_folder data/images \
     --vision_tower google/siglip-base-patch16-256-multilingual \
     --mm_projector_type mlp2x_gelu \
     --tune_mm_mlp_adapter True \

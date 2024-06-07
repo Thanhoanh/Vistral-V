@@ -16,5 +16,8 @@ hf_hub_download(repo_id="Vi-VLM/Vista", filename="images/share_textvqa/images.zi
 # Download web-landmark dataset
 hf_hub_download(repo_id="Vi-VLM/Vista", filename="images/web-landmark/images.zip", local_dir="data", repo_type="dataset")
 
+# Download web-celebrity dataset
+hf_hub_download(repo_id="Vi-VLM/Vista", filename="images/web-celebrity/images.zip", local_dir="data", repo_type="dataset")
+
 # Download wikiart dataset
 hf_hub_download(repo_id="Vi-VLM/Vista", filename="images/wikiart/images.zip", local_dir="data", repo_type="dataset")
