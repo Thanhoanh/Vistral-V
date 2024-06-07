@@ -7,6 +7,7 @@ unzip -j data/images/coco2017/val2017.zip -d data/images/coco2017/val2017
 rm data/images/coco2017/train2017.zip data/images/coco2017/val2017.zip
 
 # LLAVA
+mkdir data/images/llava/llava_pretrain
 mkdir data/images/llava/llava_pretrain/images
 unzip -j data/images/llava/images.zip -d data/images/llava/llava_pretrain/images
 rm data/images/llava/images.zip
