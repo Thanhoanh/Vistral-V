@@ -592,6 +592,8 @@ def preprocess_plain(
     # add end signal and concatenate together
     conversations = []
     for source in sources:
+        if DEFAULT_IMAGE_TOKEN not in source[0]['value']:
+            print("check not have default image token source", source)
         assert len(source) == 2
         assert DEFAULT_IMAGE_TOKEN in source[0]['value']
         source[0]['value'] = DEFAULT_IMAGE_TOKEN

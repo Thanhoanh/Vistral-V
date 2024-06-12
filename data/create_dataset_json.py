@@ -59,10 +59,26 @@ def create_vi_llava_dataset():
             json.dump(total_dataset, f, ensure_ascii=False, indent=4)
 
 def create_vi_sharegpt4v_dataset():
+    def process_conv(conversation):
+        sharegpt4v_conversation = []
+        for idx, turn in enumerate(conversation):
+            role = turn["from"]
+            content = turn["value"]
+            content = content.replace("<ảnh>", "")
+            if idx == 0 and "<image>" not in content:
+                content = f"<image>\n{content}" if random.random() > 0.5 else f"{content}\n<image>"
+            sharegpt4v_conversation.append({
+                "from": role,
+                "value": content
+            })
+        return sharegpt4v_conversation
+
+
     def preprocess_function(examples):
         id = ['sharegpt4v_' + id for id in examples["id"]]
         image = examples["image"]
         conversations = examples["vi_conversations"]
+        conversations = [process_conv(conversation) for conversation in conversations]
         return {
             "id": id,
             "image": image,
