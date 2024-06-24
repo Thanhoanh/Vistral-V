@@ -3,8 +3,13 @@ from enum import auto, Enum
 from typing import List, Tuple
 import base64
 from io import BytesIO
-from PIL import Image
+from PIL import Image, ImageFile
 
+import PIL
+
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+PIL.Image.MAX_IMAGE_PIXELS = 933120000
 
 class SeparatorStyle(Enum):
     """Different separator style."""

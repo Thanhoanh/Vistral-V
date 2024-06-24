@@ -1,7 +1,15 @@
 import os
 import random
 from datasets import load_dataset
+
+from PIL import Image, ImageFile
 import json
+
+import PIL
+
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+PIL.Image.MAX_IMAGE_PIXELS = 933120000
 
 def create_vi_llava_dataset():
     def process_conv_llava(conversation):
@@ -90,6 +98,78 @@ def create_vi_sharegpt4v_dataset():
     with open("data/vi_sharegpt4v.json", "w") as f:
         json.dump(dataset, f, ensure_ascii=False, indent=4)
 
+def create_vi_wit_dataset():
+
+    def process_conv(conversation):
+        llava_conversation = []
+        for idx, turn in enumerate(conversation):
+            role = turn["role"]
+            content = turn["content"]
+
+            if role == "user":
+                if idx == 0 and "<image>" not in content:
+                    content = f"<image>\n{content}" if random.random() > 0.5 else f"{content}\n<image>"
+                llava_conversation.append({
+                    "from": "human",
+                    "value": content
+                })
+            elif role == "assistant":
+                llava_conversation.append({
+                    "from": "gpt",
+                    "value": content
+                })
+        return llava_conversation
+
+    def preprocess_function(examples):
+        id = ['wit_' + id for id in examples["id"]]
+        image = [f"wit/images/{id}.jpg" for id in examples["id"]]
+        conversations = [process_conv(conversation) for conversation in examples["conversation"]]
+        return {
+            "id": id,
+            "image": image,
+            "conversations": conversations
+        }
+
+    def image_exists(example, local_dir):
+        print("Checking image: ", example['image'])
+        try:
+            if os.path.exists(os.path.join(local_dir, example['image'])):
+                image = Image.open(os.path.join(local_dir, example['image']))
+                image.verify()
+                image.close()
+                print(f"Image {os.path.join(local_dir, example['image'])} exists")
+                return True
+            else:
+                raise Exception("Image not found")
+        except Exception as e:
+            print(f"Error: {e} {os.path.join(local_dir, example['image'])}")
+            return False
+
+    dataset = load_dataset("Vi-VLM/Vista", name="vi_wit", split="train")
+    dataset = dataset.map(lambda batch: preprocess_function(batch), batched=True, remove_columns=dataset.column_names)
+    dataset = dataset.filter(lambda example: image_exists(example, "/mnt/disks/dev/data/images"))
+    dataset = dataset.filter(lambda example: len(example["conversations"]) == 2)
+    dataset = dataset.to_list()
+    print("Number of examples: ", len(dataset))
+    with open("data/vi_wit.json", "w") as f:
+        json.dump(dataset, f, ensure_ascii=False, indent=4)
+
+def merge_pretrain_dataset():
+    with open("data/vi_sharegpt4v.json", "r") as f:
+        sharegpt4v = json.load(f)
+    with open("data/vi_wit.json", "r") as f:
+        wit = json.load(f)
+
+    dataset = sharegpt4v + wit
+    random.shuffle(dataset)
+
+    print("Number of examples: ", len(dataset))
+    
+    with open("data/vi_pretrain.json", "w") as f:
+        json.dump(dataset, f, ensure_ascii=False, indent=4)
+
 if __name__ == '__main__':
-    create_vi_llava_dataset()
-    create_vi_sharegpt4v_dataset()
+    # create_vi_llava_dataset()
+    # create_vi_sharegpt4v_dataset()
+    create_vi_wit_dataset()
+    merge_pretrain_dataset()
