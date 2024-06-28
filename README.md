@@ -64,6 +64,8 @@ Pretrain dataset includes image-text data pairs with requirements to describe th
 ```bash
 python data/create_dataset_images.py --local-dir <IMAGE DIR> --stage pretrain
 
+DATA_DIR=<IMAGE DIR> bash data/extract_pretrain_images.sh
+
 python data/create_dataset_json.py --stage pretrain
 ```
 
@@ -76,8 +78,6 @@ At this stage we scale data with 2 versions.
 - Version 2: Pretrain with ShareGPT4V + WIT dataset. Dataset size for version 2 is around 340k samples.
 
 We use the [multilingual SigLIP](https://huggingface.co/google/siglip-base-patch16-256-multilingual) model instead of CLIP in LLaVA because the ability to understand Vietnamese and features from SigLIP is much better than CLIP.
-
-In addition to changing the data for the pretrain, we also made adjustments to match the device's existing VRAM amount of 40Gb GPU VRAM: **adjust the batch size and scale down the learning rate**.
 
 You can refer to the recipes we used for 2 versions here.
 
@@ -113,6 +113,8 @@ Finetune dataset includes LLaVA-style data covering 3 different types of tasks::
 ```bash
 python data/create_dataset_images.py --local-dir <IMAGE DIR> --stage finetune
 
+DATA_DIR=<IMAGE DIR> bash data/extract_finetune_images.sh
+
 python data/create_dataset_json.py --stage finetune
 ```
 
@@ -121,6 +123,8 @@ python data/create_dataset_json.py --stage finetune
 For the two versions of the pretrain phase, we also tried finetune to see the results.
 
 Currently due to limitations in available hardware, we only implement finetune with LoRA. However, according to my guess, if you fully refine the Language Model, you can get better results.
+
+In addition to changing the data for the pretrain/finetune, we also made adjustments to match the device's existing VRAM amount of 40Gb GPU VRAM: **adjust the batch size and scale down the learning rate**.
 
 Version 1:
 ```bash
