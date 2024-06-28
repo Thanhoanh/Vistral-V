@@ -2,6 +2,9 @@
 
 ## Contents
 - [Install](#install)
+- [Train](#train)
+- [Demo](#demo)
+- [Examples](#examples)
 
 ## Install
 
@@ -40,104 +43,149 @@ pip install -e .
 
 ## Train
 
-*Below is the latest training configuration for LLaVA v1.5. For legacy models, please refer to README of [this](https://github.com/haotian-liu/LLaVA/tree/v1.0.1) version for now. We'll add them in a separate doc later.*
+You can refer to the [Training model instructions](https://github.com/haotian-liu/LLaVA?tab=readme-ov-file#train) from the original LLaVA repository.
 
-LLaVA training consists of two stages: (1) feature alignment stage: use our 558K subset of the LAION-CC-SBU dataset to connect a *frozen pretrained* vision encoder to a *frozen LLM*; (2) visual instruction tuning stage: use 150K GPT-generated multimodal instruction-following data, plus around 515K VQA data from academic-oriented tasks, to teach the model to follow multimodal instructions.
-
-LLaVA is trained on 8 A100 GPUs with 80GB memory. To train on fewer GPUs, you can reduce the `per_device_train_batch_size` and increase the `gradient_accumulation_steps` accordingly. Always keep the global batch size the same: `per_device_train_batch_size` x `gradient_accumulation_steps` x `num_gpus`.
-
-### Hyperparameters
-We use a similar set of hyperparameters as Vicuna in finetuning.  Both hyperparameters used in pretraining and finetuning are provided below.
-
-1. Pretraining
-
-| Hyperparameter | Global Batch Size | Learning rate | Epochs | Max length | Weight decay |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| LLaVA-v1.5-13B | 256 | 1e-3 | 1 | 2048 | 0 |
-
-2. Finetuning
-
-| Hyperparameter | Global Batch Size | Learning rate | Epochs | Max length | Weight decay |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| LLaVA-v1.5-13B | 128 | 2e-5 | 1 | 2048 | 0 |
-
-### Download Vicuna checkpoints (automatically)
-
-Our base model Vicuna v1.5, which is an instruction-tuned chatbot, will be downloaded automatically when you run our provided training scripts. No action is needed.
+Below are the recipes to train the Vistral-V model through 2 stages: Pretrain - feature alignment and Finetune - visual instruction tuning. In this tutorial, we only use 1-2 device gpu NVIDIA A100 40Gb.
 
 ### Pretrain (feature alignment)
 
-Please download the 558K subset of the LAION-CC-SBU dataset with BLIP captions we use in the paper [here](https://huggingface.co/datasets/liuhaotian/LLaVA-Pretrain).
+For this phase, the model will train a projector to align features between the vision encoder and the language model.
 
-Pretrain takes around 5.5 hours for LLaVA-v1.5-13B on 8x A100 (80G), due to the increased resolution to 336px. It takes around 3.5 hours for LLaVA-v1.5-7B.
+You can retrain this stage using the instructions below, or use the [training results for the pretraining stage here](https://huggingface.co/Vi-VLM/llava-vistral-7b-pretrain).
 
-Training script with DeepSpeed ZeRO-2: [`pretrain.sh`](https://github.com/haotian-liu/LLaVA/blob/main/scripts/v1_5/pretrain.sh).
+#### Data preparation
 
-- `--mm_projector_type mlp2x_gelu`: the two-layer MLP vision-language connector.
-- `--vision_tower openai/clip-vit-large-patch14-336`: CLIP ViT-L/14 336px.
+Pretrain dataset includes 2 subsets:
+- ShareGPT4V
+- WIT
 
-<details>
-<summary>Pretrain takes around 20 hours for LLaVA-7B on 8x V100 (32G)</summary>
+Pretrain dataset includes image-text data pairs with requirements to describe the image with high quality caption.
 
- We provide training script with DeepSpeed [here](https://github.com/haotian-liu/LLaVA/blob/main/scripts/pretrain_xformers.sh).
-Tips:
-- If you are using V100 which is not supported by FlashAttention, you can use the [memory-efficient attention](https://arxiv.org/abs/2112.05682) implemented in [xFormers](https://github.com/facebookresearch/xformers). Install xformers and replace `llava/train/train_mem.py` above with [llava/train/train_xformers.py](llava/train/train_xformers.py).
-</details>
+```bash
+python data/create_dataset_images.py --local-dir <IMAGE DIR> --stage pretrain
 
-### Visual Instruction Tuning
-
-1. Prepare data
-
-Please download the annotation of the final mixture our instruction tuning data [llava_v1_5_mix665k.json](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K/blob/main/llava_v1_5_mix665k.json), and download the images from constituting datasets:
-
-- COCO: [train2017](http://images.cocodataset.org/zips/train2017.zip)
-- GQA: [images](https://downloads.cs.stanford.edu/nlp/data/gqa/images.zip)
-- OCR-VQA: [download script](https://drive.google.com/drive/folders/1_GYPY5UkUy7HIcR0zq3ZCFgeZN7BAfm_?usp=sharing), **we save all files as `.jpg`**
-- TextVQA: [train_val_images](https://dl.fbaipublicfiles.com/textvqa/images/train_val_images.zip)
-- VisualGenome: [part1](https://cs.stanford.edu/people/rak248/VG_100K_2/images.zip), [part2](https://cs.stanford.edu/people/rak248/VG_100K_2/images2.zip)
-
-After downloading all of them, organize the data as follows in `./playground/data`,
-
-```
-├── coco
-│   └── train2017
-├── gqa
-│   └── images
-├── ocr_vqa
-│   └── images
-├── textvqa
-│   └── train_images
-└── vg
-    ├── VG_100K
-    └── VG_100K_2
+python data/create_dataset_json.py --stage pretrain
 ```
 
-2. Start training!
+#### Training
 
-You may download our pretrained projectors in [Model Zoo](https://github.com/haotian-liu/LLaVA/blob/main/docs/MODEL_ZOO.md). It is not recommended to use legacy projectors, as they may be trained with a different version of the codebase, and if any option is off, the model will not function/train as we expected.
+At this stage we scale data with 2 versions.
 
-Visual instruction tuning takes around 20 hours for LLaVA-v1.5-13B on 8x A100 (80G), due to the increased resolution to 336px. It takes around 10 hours for LLaVA-v1.5-7B on 8x A100 (40G).
+- Version 1: Pretrain with ShareGPT4V dataset only. Dataset size for version 1 is around 100k samples.
 
-Training script with DeepSpeed ZeRO-3: [`finetune.sh`](https://github.com/haotian-liu/LLaVA/blob/main/scripts/v1_5/finetune.sh).
+- Version 2: Pretrain with ShareGPT4V + WIT dataset. Dataset size for version 2 is around 340k samples.
 
-If you are do not have enough GPU memory:
+We use the [multilingual SigLIP](https://huggingface.co/google/siglip-base-patch16-256-multilingual) model instead of CLIP in LLaVA because the ability to understand Vietnamese and features from SigLIP is much better than CLIP.
 
-- Use LoRA: [`finetune_lora.sh`](https://github.com/haotian-liu/LLaVA/blob/main/scripts/v1_5/finetune_lora.sh). We are able to fit 13B training in 8-A100-40G/8-A6000, and 7B training in 8-RTX3090. Make sure `per_device_train_batch_size*gradient_accumulation_steps` is the same as the provided script for best reproducibility.
-- Replace `zero3.json` with `zero3_offload.json` which offloads some parameters to CPU RAM. This slows down the training speed.
+In addition to changing the data for the pretrain, we also made adjustments to match the device's existing VRAM amount of 40Gb GPU VRAM: **adjust the batch size and scale down the learning rate**.
 
-If you are interested in finetuning LLaVA model to your own task/data, please check out [`Finetune_Custom_Data.md`](https://github.com/haotian-liu/LLaVA/blob/main/docs/Finetune_Custom_Data.md)。
+You can refer to the recipes we used for 2 versions here.
 
-New options to note:
+[Version 1 script](https://github.com/hllj/LLaVA/blob/main/scripts/vistral_llava/pretrain_v1.sh):
 
-- `--mm_projector_type mlp2x_gelu`: the two-layer MLP vision-language connector.
-- `--vision_tower openai/clip-vit-large-patch14-336`: CLIP ViT-L/14 336px.
-- `--image_aspect_ratio pad`: this pads the non-square images to square, instead of cropping them; it slightly reduces hallucination.
-- `--group_by_modality_length True`: this should only be used when your instruction tuning dataset contains both language (e.g. ShareGPT) and multimodal (e.g. LLaVA-Instruct). It makes the training sampler only sample a single modality (either image or language) during training, which we observe to speed up training by ~25%, and does not affect the final outcome.
+```bash
+bash scripts/vistral_llava/pretrain_v1.sh
+```
+
+[Version 2 script](https://github.com/hllj/LLaVA/blob/main/scripts/vistral_llava/pretrain_v2.sh):
+
+```bash
+bash scripts/vistral_llava/pretrain_v1.sh
+```
+
+#### Loss Curve
+
+![Pretrain Loss Curve](./images/pretrain_loss_curve.png)
+
+A few comments on the results:
+
+- Perform projector training so that the feature alignment between the vision feature and the language feature converges to a loss of about 0.9 - 1.1
+- After scaling more data (version 2) for training, it shows that the model has better convergence.
+
+### Finetune (visual instruction tuning)
+
+This is the stage of finetuning the Language model and projector with the frozen Vision Encoder, to learn the visual instruction dataset.
+
+#### Data preparation
+
+Finetune dataset includes LLaVA-style data covering 3 different types of tasks:: conversation, complex reasoning, detail description.
+
+```bash
+python data/create_dataset_images.py --local-dir <IMAGE DIR> --stage finetune
+
+python data/create_dataset_json.py --stage finetune
+```
+
+#### Training
+
+For the two versions of the pretrain phase, we also tried finetune to see the results.
+
+Currently due to limitations in available hardware, we only implement finetune with LoRA. However, according to my guess, if you fully refine the Language Model, you can get better results.
+
+Version 1:
+```bash
+bash scripts/vistral_llava/finetune_lora_v1.sh
+```
+
+Version 2:
+```bash
+bash scripts/vistral_llava/finetune_lora_v2.sh
+```
+
+### Loss Curve
+
+![Finetune Loss Curve](./images/finetune_loss_curve.png)
+
+A few comments on the results:
+
+- Finetune on the LLaVA data set gives quite good loss results, about 0.7 - 0.9. Demonstrating the ability of the trained pretrain model to converge relatively quickly on LLaVA data.
+
+- Version 2 relies on pretraining on more data for better loss after training than version 1. 
+
+In fact, with version 2, we trained on 2 devices, the actual batch size will be double that of version 1, so that's it. Can also be a reason for better loss.
+
+## Demo
+
+You can follow the instructions of the original LLaVA repository [here](https://github.com/haotian-liu/LLaVA?tab=readme-ov-file#demo) to start the models after training. Here we will show how to start a Vistral-V service for our current LoRA model.
+
+### Launch a controller
+
+```bash
+python -m llava.serve.controller --host 0.0.0.0 --port 10000
+```
+
+### Launch a gradio web server.
+
+```bash
+python -m llava.serve.gradio_web_server --controller http://localhost:10000 --model-list-mode reload
+```
+
+### Launch a model worker (LoRA, unmerged)
+
+```bash
+python -m llava.serve.model_worker --host 0.0.0.0 --controller http://localhost:10000 --port 40000 --worker http://localhost:40000 --model-path Vi-VLM/llava-vistral-7b-lora --model-base Viet-Mistral/Vistral-7B-Chat
+```
+
+### Examples
+
+![Example 1](./images/example_1.png)
+
+![Example 2](./images/example_2.png)
+
+![Example 3](./images/example_3.png)
+
+![Example 4](./images/example_4.png)
+
+![Example 5](./images/example_5.png)
 
 ## Evaluation
 
+Currently, Vistral-V has not been run on any specific benchmark for the Vision-Language Benchmark. We will conduct an evaluation in some tasks and update as soon as possible.
+
 ## Acknowledgement
 
-- [Vicuna](https://github.com/lm-sys/FastChat): the codebase we built upon, and our base model Vicuna-13B that has the amazing language capabilities!
+- [LLaVA](https://github.com/haotian-liu/LLaVA): We used most of the source code and instructions of the LLaVA repository and made a few modifications on it to suit the model architecture.
 
-## Related Projects
+- [Vistral](https://huggingface.co/Viet-Mistral/Vistral-7B-Chat): We are very grateful to the Vistral development team for creating a great LLM for Vietnamese.
+
+- [SigLIP](https://huggingface.co/google/siglip-base-patch16-256-multilingual): We also thank Google and the SigLIP authors for creating a very good Image-Text model, which we took advantage of useful features from the multilingual SigLIP model.
