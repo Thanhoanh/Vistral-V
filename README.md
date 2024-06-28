@@ -1,4 +1,4 @@
-# Vistral-V (Vistral-Vision) - Visual Instruction Tuning for Vistral - an Vietnamese Large Vision-Language Model.
+# Vistral-V (Vistral-Vision) - Visual Instruction Tuning for Vistral - Vietnamese Large Vision-Language Model.
 
 ## Contents
 - [Install](#install)
