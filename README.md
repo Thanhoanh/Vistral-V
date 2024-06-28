@@ -184,9 +184,21 @@ python -m llava.serve.model_worker --host 0.0.0.0 --controller http://localhost:
 
 ![Example 5](./images/example_5.png)
 
+![Example 6](./images/example_6.png)
+
+![Example 7](./images/example_7.png)
+
+![Example 8](./images/example_8.png)
+
 ## Evaluation
 
 Currently, Vistral-V has not been run on any specific benchmark for the Vision-Language Benchmark. We will conduct an evaluation in some tasks and update as soon as possible.
+
+## Additional Information
+
+- Organization: [Vietnamese-VLM](https://huggingface.co/Vi-VLM)
+
+- Contact: [Bui Van Hop](https://github.com/hllj)
 
 ## Acknowledgement
 
@@ -195,3 +207,5 @@ Currently, Vistral-V has not been run on any specific benchmark for the Vision-L
 - [Vistral](https://huggingface.co/Viet-Mistral/Vistral-7B-Chat): We are very grateful to the Vistral development team for creating a great LLM for Vietnamese.
 
 - [SigLIP](https://huggingface.co/google/siglip-base-patch16-256-multilingual): We also thank Google and the SigLIP authors for creating a very good Image-Text model, which we took advantage of useful features from the multilingual SigLIP model.
+
+## Citation Information
