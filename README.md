@@ -61,6 +61,8 @@ Pretrain dataset includes 2 subsets:
 
 Pretrain dataset includes image-text data pairs with requirements to describe the image with high quality caption.
 
+You can refer to instructions from LLaVA to create more custom datasets [here](./docs/Data.md).
+
 ```bash
 python data/create_dataset_images.py --local-dir <IMAGE DIR> --stage pretrain
 
@@ -81,13 +83,13 @@ We use the [multilingual SigLIP](https://huggingface.co/google/siglip-base-patch
 
 You can refer to the recipes we used for 2 versions here.
 
-[Version 1 script](https://github.com/hllj/LLaVA/blob/main/scripts/vistral_llava/pretrain_v1.sh):
+[Version 1 script](./scripts/vistral_llava/pretrain_v1.sh):
 
 ```bash
 bash scripts/vistral_llava/pretrain_v1.sh
 ```
 
-[Version 2 script](https://github.com/hllj/LLaVA/blob/main/scripts/vistral_llava/pretrain_v2.sh):
+[Version 2 script](./scripts/vistral_llava/pretrain_v2.sh):
 
 ```bash
 bash scripts/vistral_llava/pretrain_v1.sh
@@ -126,12 +128,12 @@ Currently due to limitations in available hardware, we only implement finetune w
 
 In addition to changing the data for the pretrain/finetune, we also made adjustments to match the device's existing VRAM amount of 40Gb GPU VRAM: **adjust the batch size and scale down the learning rate**.
 
-Version 1:
+[Version 1 script](./scripts/vistral_llava/finetune_lora_v1.sh):
 ```bash
 bash scripts/vistral_llava/finetune_lora_v1.sh
 ```
 
-Version 2:
+[Version 2 script](./scripts/vistral_llava/finetune_lora_v2.sh):
 ```bash
 bash scripts/vistral_llava/finetune_lora_v2.sh
 ```
