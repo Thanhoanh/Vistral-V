@@ -1,3 +1,4 @@
+import argparse
 import os
 import random
 from datasets import load_dataset
@@ -169,7 +170,14 @@ def merge_pretrain_dataset():
         json.dump(dataset, f, ensure_ascii=False, indent=4)
 
 if __name__ == '__main__':
-    # create_vi_llava_dataset()
-    # create_vi_sharegpt4v_dataset()
-    create_vi_wit_dataset()
-    merge_pretrain_dataset()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--stage", choices=["all", "pretrain", "finetune"], type=str, default="all", help="Stage to download (all, pretrain, finetune)")
+    args = parser.parse_args()
+    
+    if args.stage == "all" or args.stage == "finetune":
+        create_vi_llava_dataset()
+    
+    if args.stage == "all" or args.stage == "pretrain":
+        create_vi_sharegpt4v_dataset()
+        create_vi_wit_dataset()
+        merge_pretrain_dataset()
