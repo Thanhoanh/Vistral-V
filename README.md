@@ -12,8 +12,8 @@ If you are not using Linux, do *NOT* proceed, see instructions for [macOS](https
 
 1. Clone this repository and navigate to LLaVA folder
 ```bash
-git clone https://github.com/hllj/LLaVA.git
-cd LLaVA
+git clone https://github.com/hllj/Vistral-V.git
+cd Vistral-V
 ```
 
 2. Install Package
