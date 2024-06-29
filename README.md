@@ -109,7 +109,7 @@ bash scripts/vistral_llava/pretrain_v1.sh
 
 #### Loss Curve
 
-![Pretrain Loss Curve](./images/pretrain_loss_curve.png)
+![Pretrain Loss Curve](assets/images/pretrain_loss_curve.png)
 
 A few comments on the results:
 
@@ -152,7 +152,7 @@ bash scripts/vistral_llava/finetune_lora_v2.sh
 
 ### Loss Curve
 
-![Finetune Loss Curve](./images/finetune_loss_curve.png)
+![Finetune Loss Curve](assets/images/finetune_loss_curve.png)
 
 A few comments on the results:
 
@@ -186,21 +186,21 @@ python -m llava.serve.model_worker --host 0.0.0.0 --controller http://localhost:
 
 ### Examples
 
-![Example 1](./images/example_1.png)
+![Example 1](assets/images/example_1.png)
 
-![Example 2](./images/example_2.png)
+![Example 2](assets/images/example_2.png)
 
-![Example 3](./images/example_3.png)
+![Example 3](assets/images/example_3.png)
 
-![Example 4](./images/example_4.png)
+![Example 4](assets/images/example_4.png)
 
-![Example 5](./images/example_5.png)
+![Example 5](assets/images/example_5.png)
 
-![Example 6](./images/example_6.png)
+![Example 6](assets/images/example_6.png)
 
-![Example 7](./images/example_7.png)
+![Example 7](assets/images/example_7.png)
 
-![Example 8](./images/example_8.png)
+![Example 8](assets/images/example_8.png)
 
 ## Evaluation
 
