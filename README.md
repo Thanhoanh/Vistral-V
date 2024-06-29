@@ -1,10 +1,17 @@
 # Vistral-V (Vistral-Vision) - Visual Instruction Tuning for Vistral - Vietnamese Large Vision-Language Model.
 
 ## Contents
+- [Quick start Notebook](#quick-start-notebook)
 - [Install](#install)
 - [Train](#train)
 - [Demo](#demo)
 - [Examples](#examples)
+
+## Quick Start Notebook
+
+You can follow the notebooks here to inference the Vistral-V model.
+
+- [Kaggle Notebook](https://www.kaggle.com/code/hlly34/vistral-v-notebook)
 
 ## Install
 
