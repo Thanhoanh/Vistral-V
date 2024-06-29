@@ -11,7 +11,8 @@
 
 You can follow the notebooks here to inference the Vistral-V model.
 
-- [Kaggle Notebook](https://www.kaggle.com/code/hlly34/vistral-v-notebook)
+[![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://kaggle.com/kernels/welcome?src=https://github.com/hllj/Vistral-V/blob/master/assets/quickstart_example.ipynb)
+
 
 ## Install
 
