@@ -288,8 +288,8 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
         fout.write(json.dumps(data) + "\n")
 
 title_markdown = ("""
-# 🌋 LLaVA: Large Language and Vision Assistant
-[[Project Page](https://llava-vl.github.io)] [[Code](https://github.com/haotian-liu/LLaVA)] [[Model](https://github.com/haotian-liu/LLaVA/blob/main/docs/MODEL_ZOO.md)] | 📚 [[LLaVA](https://arxiv.org/abs/2304.08485)] [[LLaVA-v1.5](https://arxiv.org/abs/2310.03744)] [[LLaVA-v1.6](https://llava-vl.github.io/blog/2024-01-30-llava-1-6/)]
+# Vistral-V (Vistral-Vision) - Visual Instruction Tuning for Vistral - Vietnamese Large Vision-Language Model
+[[Code](https://github.com/haotian-liu/LLaVA)]
 """)
 
 tos_markdown = ("""
@@ -341,8 +341,9 @@ def build_demo(embed_mode, cur_dir=None, concurrency_count=10):
                 if cur_dir is None:
                     cur_dir = os.path.dirname(os.path.abspath(__file__))
                 gr.Examples(examples=[
-                    [f"{cur_dir}/examples/extreme_ironing.jpg", "What is unusual about this image?"],
-                    [f"{cur_dir}/examples/waterview.jpg", "What are the things I should be cautious about when I visit here?"],
+                    [f"{cur_dir}/examples/example_vinhhalong.jpeg", "Đây là đâu và tôi có thể tới đây làm gì ?"],
+                    [f"{cur_dir}/examples/example.jpeg", "Bức tranh này có tên là gì ?"],
+                    [f"{cur_dir}/examples/waterview.jpg", "Tôi có cần lưu ý gì khi tới đây?"],
                 ], inputs=[imagebox, textbox])
 
                 with gr.Accordion("Parameters", open=False) as parameter_row:

@@ -31,6 +31,10 @@ pip install --upgrade pip  # enable PEP 660 support
 pip install -e .
 ```
 
+```Shell
+pip install -r requirements.txt
+```
+
 3. Install additional packages for training cases
 ```
 pip install -e ".[train]"
