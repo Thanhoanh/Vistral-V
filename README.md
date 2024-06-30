@@ -178,6 +178,20 @@ A few comments on the results:
 
 In fact, with version 2, we trained on 2 devices, the actual batch size will be double that of version 1, so that's it. Can also be a reason for better loss.
 
+## CLI
+
+You can quickly test the model using the simple CLI as follows.
+
+```bash
+python -m llava.serve.cli --model-path <repo_id or checkpoint dir> --image-file ./assets/images/example.jpeg
+```
+
+Example:
+
+```bash
+python -m llava.serve.cli --model-path Vi-VLM/Vistral-V-7B --image-file ./assets/images/example.jpeg
+```
+
 ## Demo
 
 You can follow the instructions of the original LLaVA repository [here](https://github.com/haotian-liu/LLaVA?tab=readme-ov-file#demo) to start the models after training. Here we will show how to start a Vistral-V service for our current LoRA model.
