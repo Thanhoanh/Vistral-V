@@ -150,6 +150,22 @@ bash scripts/vistral_llava/finetune_lora_v1.sh
 bash scripts/vistral_llava/finetune_lora_v2.sh
 ```
 
+#### Merge and Push to Hub (optional)
+
+```bash
+python upload_merge_model.py \
+    --model-path <lora checkpoint dir> \
+    --model-base Viet-Mistral/Vistral-7B-Chat \
+    --save-merged-model --save-dir <merged checkpoint dir> \
+    --push-to-hub --repo-id <repo id HF>
+```
+
+Example:
+
+```bash
+python upload_merge_model.py --model-path checkpoints/llava-vistral-7b-lora-2 --model-base Viet-Mistral/Vistral-7B-Chat --save-merged-model --save-dir checkpoints/Vistral-V-7B/ --push-to-hub --repo-id Vi-VLM/Vistral-V-7B
+```
+
 ### Loss Curve
 
 ![Finetune Loss Curve](assets/images/finetune_loss_curve.png)
@@ -178,10 +194,36 @@ python -m llava.serve.controller --host 0.0.0.0 --port 10000
 python -m llava.serve.gradio_web_server --controller http://localhost:10000 --model-list-mode reload
 ```
 
-### Launch a model worker (LoRA, unmerged)
+### Launch a model worker
+
+Start a model worker to start serving your model, the script supports multi device inference.
+
+#### LoRA, unmerged
+
+After training the model with LoRA you can start the model worker or download our lora checkpoint.
 
 ```bash
 python -m llava.serve.model_worker --host 0.0.0.0 --controller http://localhost:10000 --port 40000 --worker http://localhost:40000 --model-path Vi-VLM/llava-vistral-7b-lora --model-base Viet-Mistral/Vistral-7B-Chat
+```
+
+or 
+
+```bash
+python -m llava.serve.model_worker --host 0.0.0.0 --controller http://localhost:10000 --port 40000 --worker http://localhost:40000 --model-path <lora checkpoint dir> --model-base Viet-Mistral/Vistral-7B-Chat
+```
+
+### Fully Finetuned Model / Merged Model
+
+You can use a fully finetuned or merged model (if merging lora, see the [instructions above](#merge-and-push-to-hub-optional)), you can use our model checkpoint.
+
+```bash
+python -m llava.serve.model_worker --host 0.0.0.0 --controller http://localhost:10000 --port 40000 --worker http://localhost:40000 --model-path Vi-VLM/Vistral-V-7B
+```
+
+or
+
+```bash
+python -m llava.serve.model_worker --host 0.0.0.0 --controller http://localhost:10000 --port 40000 --worker http://localhost:40000 --model-path <model checkpoint dir>
 ```
 
 ### Examples

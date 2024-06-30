@@ -60,6 +60,10 @@ class ModelWorker:
         else:
             self.model_name = model_name
 
+        # FIXME: Vistral-V is need to be fixed, add prefix 'llava-'
+        if 'vistral-v' in self.model_name.lower():
+            self.model_name = 'llava-' + self.model_name
+
         self.device = device
         logger.info(f"Loading the model {self.model_name} on worker {worker_id} ...")
         self.tokenizer, self.model, self.image_processor, self.context_len = load_pretrained_model(
