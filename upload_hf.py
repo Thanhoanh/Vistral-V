@@ -1,10 +1,10 @@
 from huggingface_hub import HfApi
 api = HfApi()
 
-# Upload all the content from the local folder to your remote Space.
-# By default, files are uploaded at the root of the repo
 api.upload_folder(
-    folder_path="checkpoints/llava-vistral-7b-lora-2",
-    repo_id="Vi-VLM/llava-vistral-7b-lora",
-    repo_type="model"
+    folder_path="/mnt/disks/dev/data/images/wit",
+    path_in_repo="images/wit",
+    repo_id="Vi-VLM/Vista",
+    repo_type="dataset",
+    allow_patterns="images_part_*",
 )
