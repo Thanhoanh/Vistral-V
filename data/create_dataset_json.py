@@ -171,7 +171,7 @@ def merge_pretrain_dataset():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--local-dir', type=str, default="/mnt/disks/dev/data", help='Local directory to save the dataset')
+    parser.add_argument('--local-dir', type=str, default="/mnt/disks/dev/data/images", help='Local directory to save the dataset')
     parser.add_argument("--stage", choices=["all", "pretrain", "finetune"], type=str, default="all", help="Stage to download (all, pretrain, finetune)")
     args = parser.parse_args()
     

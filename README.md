@@ -78,9 +78,9 @@ You can refer to instructions from LLaVA to create more custom datasets [here](.
 ```bash
 python data/create_dataset_images.py --local-dir <IMAGE DIR> --stage pretrain
 
-DATA_DIR=<IMAGE DIR> bash data/extract_pretrain_images.sh
+DATA_DIR=<IMAGE DIR>/images bash data/extract_pretrain_images.sh
 
-python data/create_dataset_json.py --local-dir <IMAGE DIR> --stage pretrain
+python data/create_dataset_json.py --local-dir <IMAGE DIR>/images --stage pretrain
 ```
 
 #### Training
@@ -127,9 +127,9 @@ Finetune dataset includes LLaVA-style data covering 3 different types of tasks::
 ```bash
 python data/create_dataset_images.py --local-dir <IMAGE DIR> --stage finetune
 
-DATA_DIR=<IMAGE DIR> bash data/extract_finetune_images.sh
+DATA_DIR=<IMAGE DIR>/images bash data/extract_finetune_images.sh
 
-python data/create_dataset_json.py --local-dir <IMAGE DIR> --stage finetune
+python data/create_dataset_json.py --local-dir <IMAGE DIR>/images --stage finetune
 ```
 
 #### Training
