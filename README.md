@@ -80,7 +80,7 @@ python data/create_dataset_images.py --local-dir <IMAGE DIR> --stage pretrain
 
 DATA_DIR=<IMAGE DIR> bash data/extract_pretrain_images.sh
 
-python data/create_dataset_json.py --stage pretrain
+python data/create_dataset_json.py --local-dir <IMAGE DIR> --stage pretrain
 ```
 
 #### Training
@@ -129,7 +129,7 @@ python data/create_dataset_images.py --local-dir <IMAGE DIR> --stage finetune
 
 DATA_DIR=<IMAGE DIR> bash data/extract_finetune_images.sh
 
-python data/create_dataset_json.py --stage finetune
+python data/create_dataset_json.py --local-dir <IMAGE DIR> --stage finetune
 ```
 
 #### Training

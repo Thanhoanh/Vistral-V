@@ -99,7 +99,7 @@ def create_vi_sharegpt4v_dataset():
     with open("data/vi_sharegpt4v.json", "w") as f:
         json.dump(dataset, f, ensure_ascii=False, indent=4)
 
-def create_vi_wit_dataset():
+def create_vi_wit_dataset(local_dir):
 
     def process_conv(conversation):
         llava_conversation = []
@@ -148,7 +148,7 @@ def create_vi_wit_dataset():
 
     dataset = load_dataset("Vi-VLM/Vista", name="vi_wit", split="train")
     dataset = dataset.map(lambda batch: preprocess_function(batch), batched=True, remove_columns=dataset.column_names)
-    dataset = dataset.filter(lambda example: image_exists(example, "/mnt/disks/dev/data/images"))
+    dataset = dataset.filter(lambda example: image_exists(example, local_dir))
     dataset = dataset.filter(lambda example: len(example["conversations"]) == 2)
     dataset = dataset.to_list()
     print("Number of examples: ", len(dataset))
@@ -171,6 +171,7 @@ def merge_pretrain_dataset():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--local-dir', type=str, default="/mnt/disks/dev/data", help='Local directory to save the dataset')
     parser.add_argument("--stage", choices=["all", "pretrain", "finetune"], type=str, default="all", help="Stage to download (all, pretrain, finetune)")
     args = parser.parse_args()
     
@@ -179,5 +180,5 @@ if __name__ == '__main__':
     
     if args.stage == "all" or args.stage == "pretrain":
         create_vi_sharegpt4v_dataset()
-        create_vi_wit_dataset()
+        create_vi_wit_dataset(args.local_dir)
         merge_pretrain_dataset()
