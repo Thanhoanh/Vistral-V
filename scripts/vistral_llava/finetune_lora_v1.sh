@@ -10,7 +10,7 @@ deepspeed llava/train/train_mem.py \
     --data_path data/vi_llava_train.json \
     --image_folder data/images \
     --vision_tower google/siglip-base-patch16-256-multilingual \
-    --pretrain_mm_mlp_adapter vistral_llava/llava-vistral-7b-pretrain/mm_projector.bin \
+    --pretrain_mm_mlp_adapter Vi-VLM/llava-vistral-7b-pretrain/mm_projector.bin \
     --mm_projector_type mlp2x_gelu \
     --mm_vision_select_layer -2 \
     --mm_use_im_start_end False \
